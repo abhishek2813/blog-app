@@ -1,5 +1,6 @@
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
+const session = require("express-session");
 const validator = require("validator");
 const SALT_ROUND = parseInt(process.env.SALT_ROUND);
 //Register user
@@ -61,4 +62,53 @@ const registerUser = async (req, resp) => {
   }
 };
 
-module.exports = { registerUser };
+//Login For User 
+const loginUser = async(req,resp)=>{
+  const {loginId,password} = req.body;
+  //Chceking both are not empty 
+  if(!loginId || !password){
+    return resp.status(500).send({Error:"All fields are required"})
+  }
+  let userData;
+  //Checking if email then find in collection and store in userData
+  if(validator.isEmail(loginId)){
+   userData = await User.findOne({email:loginId})
+  }else{
+    //find by username and store in userData
+    userData = await User.findOne({username:loginId})
+  }
+
+  // if User not Found return
+ if(!userData){
+  return resp.status(500).send({Error:"User Not Found"})
+ }
+ //checking password and user Password matched or not
+ const isMatch = await bcrypt.compare(password,userData.password)
+
+ //if not matched return
+ if(!isMatch){
+  return resp.status(500).send({Error:"Wrong Password"})
+ }
+ // adding fields in session
+ req.session.isAuth = true;
+ req.session.user = {
+  name:userData.name,
+  username:userData.username,
+  email:userData.email,
+  id:userData._id
+ }
+ resp.status(201).send({message:"Login success"})
+
+}
+
+//User Logout 
+const logoutUser = (req,resp)=>{
+  req.session.destroy((err)=>{
+    if(err){
+      return resp.status(400).send({status:400,message:"logout failed",error:err})
+    }
+  })
+  return resp.status(201).send({status:200,message:"logout successfully"})
+}
+
+module.exports = { registerUser,loginUser,logoutUser };
