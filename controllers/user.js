@@ -95,7 +95,7 @@ const loginUser = async(req,resp)=>{
   name:userData.name,
   username:userData.username,
   email:userData.email,
-  id:userData._id
+  userId:userData._id
  }
  resp.status(201).send({message:"Login success"})
 

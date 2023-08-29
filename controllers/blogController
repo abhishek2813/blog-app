@@ -1,0 +1,142 @@
+const Blog = require("../models/Blog");
+const validator = require("validator");
+const mongoose = require("mongoose");
+//create blog controller
+const createBlog = async (req, resp) => {
+  const { title, textBody } = req.body;
+  // Validation checks
+  const errors = {};
+  if (!title || !textBody) {
+    errors.allFields = "All fields are required";
+  }
+  if (validator.isEmpty(title)) {
+    errors.title = "Blog title is empty";
+  }
+  if (!validator.isLength(textBody, { min: 10, max: 1000 })) {
+    errors.textBody = "Blog body text should be between 10 and 1000 characters";
+  }
+  // if getting any error
+  if (Object.keys(errors).length > 0) {
+    return resp.status(400).json({ errors });
+  }
+  const newBlog = new Blog({
+    title,
+    textBody,
+    userId: req.session.user.userId,
+  });
+  try {
+    await newBlog.save();
+    resp
+      .status(201)
+      .send({ status: 201, message: "Blog Created Successfully" });
+  } catch (error) {
+    resp.status(400).send({ status: 400, message: "Blog Created Failed" });
+  }
+};
+//Get blogs
+
+const getMyBlogs = async (req, resp) => {
+  //getting user id from session
+  const userId = new mongoose.Types.ObjectId(req.session.user.userId); // Convert to ObjectId
+  const page = parseInt(req.query.page) || 1;
+  const LIMIT = 10;
+  const skipCount = (page - 1) * LIMIT;
+  try {
+    //get results
+    const userBlog = await Blog.aggregate([
+      { $match: { userId: userId } },
+      { $sort: { creationDateTime: -1 } },
+      {
+        $facet: {
+          metadata: [{ $count: "total" }],
+          data: [{ $skip: skipCount }, { $limit: LIMIT }],
+        },
+      },
+    ]);
+    resp.status(201).send({
+      status: 201,
+      message: "User Blogs fetched successfully",
+      data: userBlog[0].data,
+      currentPage: page,
+    });
+  } catch (error) {
+    console.error("Error:", error);
+    resp
+      .status(400)
+      .send({ status: 400, message: "User Blogs fetched Failed" });
+  }
+};
+//delete Blog
+const deleteBlog = async (req, resp) => {
+  const blogId = req.params.blogId;
+  try {
+    const result = await Blog.deleteOne({ _id: blogId });
+    // console.log(result);
+    if (result.deletedCount > 0) {
+      resp
+        .status(201)
+        .send({ status: 201, message: "Blog successfully Deleted" });
+    } else {
+      resp.status(400).send({
+        status: 400,
+        message: "Delete Blogs Failed or Blog Already deleted",
+      });
+    }
+  } catch (error) {
+    console.log("erroe", error);
+    resp.status(400).send({ status: 400, message: "Delete Blogs Failed" });
+  }
+};
+//Edit Blog
+
+const editBlog = async (req, resp) => {
+  const { blogId, title, textBody } = req.body;
+  const userId = req.session.user.userId;
+
+  if (!title || !textBody || !blogId) {
+    return resp
+      .status(400)
+      .send({ status: 400, message: "All fields are required" });
+  }
+  try {
+    const blogData = await Blog.findById(blogId);
+    //check if user is Authorize to edit his blog;
+    if (blogData.userId.toString() !== userId.toString()) {
+      return resp.status(401).send({
+        status: 401,
+        message: "Not allowed to edit authorization failed",
+      });
+    }
+    //compare the time if it's in 30min of creation
+    const creationDateTime = blogData.creationDateTime.getTime();
+    const currentDateTime = Date.now();
+    const diffTime = (currentDateTime - creationDateTime) / (1000 * 60);
+
+    if (diffTime > 30) {
+      return resp.status(400).send({
+        status: 400,
+        message: "Not allowed to edit after 30 min of creation!",
+      });
+    }
+  } catch (error) {
+    return resp
+      .status(400)
+      .send({ status: 400, message: "Update Blogs Failed" });
+  }
+  try {
+    const newObj = {
+      title,
+      textBody,
+    };
+    await Blog.findOneAndUpdate({ _id: blogId }, newObj);
+    // console.log(result);
+    return resp
+      .status(201)
+      .send({ status: 201, message: "Blog updated successfully" });
+  } catch (error) {
+    return resp
+      .status(400)
+      .send({ status: 400, message: "Update Blogs Failed" });
+  }
+};
+module.exports = { createBlog, getMyBlogs, deleteBlog, editBlog };
