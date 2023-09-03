@@ -5,6 +5,7 @@ const userRoutes = require("./routes/users");
 const blogRoutes = require("./routes/blog");
 const followRoutes = require("./routes/follow");
 const db = require("./config/db");
+const cors = require("cors"); // for enabling calls any network
 require("dotenv").config();
 const app = express();
 
@@ -23,9 +24,14 @@ app.use(
     resave: false,
     saveUninitialized: false,
     store: store,
-  })
+  }),
 );
 
+const corsOptions = {
+  origin: "http://localhost:3000", // Change this to match your React frontend URL
+  credentials: true,
+};
+app.use(cors(corsOptions));
 //Adding All Routes from routes folder
 app.use("/user", userRoutes);
 app.use("/blog", blogRoutes);

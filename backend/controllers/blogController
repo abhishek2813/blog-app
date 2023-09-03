@@ -1,4 +1,5 @@
 const Blog = require("../models/Blog");
+const Follow = require("../models/Follow");
 const validator = require("validator");
 const mongoose = require("mongoose");
 //create blog controller
@@ -33,6 +34,21 @@ const createBlog = async (req, resp) => {
     resp.status(400).send({ status: 400, message: "Blog Created Failed" });
   }
 };
+
+const getSingleBlog = async(req, resp)=>{
+  const blogId = req.params.id;
+  // console.log(blogId);
+  try {
+    const blogData = await Blog.findById(blogId);
+    resp.status(201).send({
+      status: 201,
+      message: "Blogs fetched successfully",
+      data: blogData
+    });
+  } catch (error) {
+    resp.status(400).send({ status: 400, message: "Blogs Failed to Fetched" });
+  }
+}
 //Get blogs
 
 const getMyBlogs = async (req, resp) => {
@@ -88,7 +104,6 @@ const deleteBlog = async (req, resp) => {
   }
 };
 //Edit Blog
-
 const editBlog = async (req, resp) => {
   const { blogId, title, textBody } = req.body;
   const userId = req.session.user.userId;
@@ -98,21 +113,31 @@ const editBlog = async (req, resp) => {
       .status(400)
       .send({ status: 400, message: "All fields are required" });
   }
+
   try {
     const blogData = await Blog.findById(blogId);
-    //check if user is Authorize to edit his blog;
+
+    if (!blogData) {
+      return resp.status(404).send({
+        status: 404,
+        message: "Blog not found",
+      });
+    }
+
+    // Check if user is authorized to edit their blog
     if (blogData.userId.toString() !== userId.toString()) {
       return resp.status(401).send({
         status: 401,
         message: "Not allowed to edit authorization failed",
       });
     }
-    //compare the time if it's in 30min of creation
+
+    // Compare the time if it's within 30 minutes of creation
     const creationDateTime = blogData.creationDateTime.getTime();
     const currentDateTime = Date.now();
-    const diffTime = (currentDateTime - creationDateTime) / (1000 * 60);
+    const timeDifferenceMinutes = (currentDateTime - creationDateTime) / (1000 * 60);
 
-    if (diffTime > 30) {
+    if (timeDifferenceMinutes > 30) {
       return resp.status(400).send({
         status: 400,
         message: "Not allowed to edit after 30 min of creation!",
@@ -123,13 +148,14 @@ const editBlog = async (req, resp) => {
       .status(400)
       .send({ status: 400, message: "Update Blogs Failed" });
   }
+
   try {
     const newObj = {
       title,
       textBody,
     };
     await Blog.findOneAndUpdate({ _id: blogId }, newObj);
-    // console.log(result);
+
     return resp
       .status(201)
       .send({ status: 201, message: "Blog updated successfully" });
@@ -139,4 +165,26 @@ const editBlog = async (req, resp) => {
       .send({ status: 400, message: "Update Blogs Failed" });
   }
 };
-module.exports = { createBlog, getMyBlogs, deleteBlog, editBlog };
+const getHomeBlog = async(req,resp)=>{
+const userId = req.session.user.userId;
+try {
+  //following list
+  const followingList = await Follow.find({followerUserId:userId});
+  //following userId array;
+  let followingUserId = [];
+  followingList.forEach((followObj)=>{
+    followingUserId.push(followObj.followingUserId)
+  })
+  //get Blogs of following
+  const followingBlogs = await Blog.find({
+    userId:{$in:followingUserId}
+  })
+  // console.warn(followingBlogs);
+  return resp.status(201).send({status:201,message:"Fetched follwoing Blogs",data:followingBlogs})
+} catch (error) {
+  return resp
+      .status(400)
+      .send({ status: 400, message: "Unable HomeBlog to Fetched" });
+  }
+}
+module.exports = { createBlog, getMyBlogs, deleteBlog, editBlog,getHomeBlog,getSingleBlog};

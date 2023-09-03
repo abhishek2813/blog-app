@@ -1,0 +1,129 @@
+import { useParams } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { getSingleBlog, getUpdateBlog } from "../actions/blogActions";
+import Header from "./Header";
+
+function EditBlog() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    title: "",
+    textBody: "",
+  });
+
+  const [validationErrors, setValidationErrors] = useState({
+    title: "",
+    textBody: "",
+  });
+
+  useEffect(() => {
+    async function fetchSingleBlog() {
+      const result = await getSingleBlog(id);
+      const newObj = {
+        title: result.data.data.title,
+        textBody: result.data.data.textBody,
+        blogId: result.data.data._id,
+      };
+      // console.warn(newObj);
+      setFormData(newObj);
+    }
+    fetchSingleBlog();
+  }, []);
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
+    // console.log(formData);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Reset validation errors
+    setValidationErrors({
+      title: "",
+      textBody: "",
+    });
+
+    let isValid = true;
+
+    // Basic validation checks
+    if (formData.title.trim() === "") {
+      setValidationErrors((prevErrors) => ({
+        ...prevErrors,
+        title: "Title of blog is required",
+      }));
+      isValid = false;
+    }
+
+    if (formData.textBody.trim() === "") {
+      setValidationErrors((prevErrors) => ({
+        ...prevErrors,
+        textBody: "Blog body is required",
+      }));
+      isValid = false;
+    }
+
+    if (isValid) {
+      //call login function
+      const result = await getUpdateBlog(formData);
+      if (result.status === 201) {
+        navigate("/myBlogs");
+      } else {
+        alert(result.response.data.message);
+      }
+    }
+  };
+
+  return (
+    <div className="container">
+      <Header />
+      <div className="row mt-3 pt-3">
+        <h3>Update Blog</h3>
+        <form onSubmit={handleSubmit}>
+          <div className="mb-3">
+            <label htmlFor="username" className="form-label">
+              Blog Title
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              id="username"
+              name="title"
+              value={formData.title}
+              onChange={handleChange}
+              placeholder="Enter Email or Username"
+            />
+            {validationErrors.title && (
+              <div className="text-danger">{validationErrors.title}</div>
+            )}
+          </div>
+          <div className="mb-3">
+            <label htmlFor="textBody" className="form-label">
+              Blog Body
+            </label>
+            <textarea
+              type="text"
+              className="form-control"
+              id="textBody"
+              name="textBody"
+              value={formData.textBody}
+              onChange={handleChange}
+              placeholder="Enter your textBody"
+              rows={3}
+            />
+            {validationErrors.textBody && (
+              <div className="text-danger">{validationErrors.textBody}</div>
+            )}
+          </div>
+          <div className="mb-3">
+            <button type="submit" className="btn btn-primary">
+              Update
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+export default EditBlog;

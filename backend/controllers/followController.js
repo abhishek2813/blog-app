@@ -107,15 +107,22 @@ const getFollowingList = async (req, resp) => {
     //store following user id into array
     let followingListUserId = [];
     followingList.forEach((followObj) =>
-      followingListUserId.push(followObj.followingUserId)
+      followingListUserId.push(followObj.followingUserId),
     );
 
     const userIdList = await User.find({ _id: { $in: followingListUserId } });
+    // Create an array of user objects with the follow field
+    const userListWithFollow = userIdList.map((user) => ({
+      userId: user._id,
+      name: user.name,
+      username: user.username,
+      email: user.email,
+    }));
     //return userIdList
     return resp.status(201).send({
       status: 201,
       message: "Fetched following list",
-      data: userIdList,
+      data: userListWithFollow,
     });
   } catch (error) {
     return resp
@@ -159,15 +166,21 @@ const getFollowerList = async (req, resp) => {
     //store follower user id into array
     let followerListUserId = [];
     followerList.forEach((followObj) =>
-      followerListUserId.push(followObj.followerUserId)
+      followerListUserId.push(followObj.followerUserId),
     );
 
     const userIdList = await User.find({ _id: { $in: followerListUserId } });
     //return userIdList
+    const userListWithFollow = userIdList.map((user) => ({
+      userId: user._id,
+      name: user.name,
+      username: user.username,
+      email: user.email,
+    }));
     return resp.status(201).send({
       status: 201,
       message: "Fetched follower list",
-      data: userIdList,
+      data: userListWithFollow,
     });
   } catch (error) {
     return resp
@@ -227,8 +240,8 @@ const unFollowUser = async (req, res) => {
     });
 
     return res
-      .status(200)
-      .json({ status: 200, message: "UnFollow successfully" });
+      .status(201)
+      .json({ status: 201, message: "UnFollow successfully" });
   } catch (error) {
     return res.status(400).json({ status: 400, message: "Db error" });
   }
