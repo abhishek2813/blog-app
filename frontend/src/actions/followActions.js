@@ -1,10 +1,11 @@
 import axios from "axios";
 axios.defaults.withCredentials = true;
+const url = process.env.REACT_APP_API_URL;
 const followUser = async (userId) => {
   try {
     const followingUserId = { followingUserId: userId };
     const result = await axios.post(
-      "http://localhost:4000/follow/followUser",
+      `${url}/follow/followUser`,
       followingUserId,
     );
     return result;
@@ -15,7 +16,7 @@ const followUser = async (userId) => {
 const getFollowingList = async () => {
   try {
     const result = await axios.get(
-      "http://localhost:4000/follow/followingList",
+      `${url}/follow/followingList`,
     );
     return result;
   } catch (error) {
@@ -24,7 +25,7 @@ const getFollowingList = async () => {
 };
 const getFollowersList = async () => {
   try {
-    const result = await axios.get("http://localhost:4000/follow/followerList");
+    const result = await axios.get(`${url}/follow/followerList`);
     return result;
   } catch (error) {
     return error;
@@ -34,7 +35,7 @@ const unFollowUser = async (userId) => {
   try {
     const followingUserId = { followingUserId: userId };
     const result = await axios.post(
-      "http://localhost:4000/follow/unFollowUser",
+      `${url}/follow/unFollowUser`,
       followingUserId,
     );
     return result;

@@ -15,7 +15,7 @@ function LoginPage() {
   return (
     <div>
       <LoginForm />
-      <div>Create Account <Link className="link" to="/register">Go Register</Link></div>
+      <div className="text-center">Create Account <Link className="link" to="/register">Go Register</Link></div>
     </div>
   );
 }

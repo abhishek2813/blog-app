@@ -14,7 +14,7 @@ function RegisterPage() {
   return (
     <div>
       <RegisterForm />
-      <div>Already Have Account <Link className="link" to="/login">Go Login</Link></div>
+      <div className="text-center">Already Have Account <Link className="link" to="/login">Go Login</Link></div>
     </div>
   );
 }

@@ -1,8 +1,9 @@
 import axios from "axios";
 axios.defaults.withCredentials = true;
+const url = process.env.REACT_APP_API_URL;
 const getMyBlog = async (page) => {
   try {
-    const result = await axios.get("http://localhost:4000/blog/get-blogs");
+    const result = await axios.get(`${url}/blog/get-blogs`);
     return result;
   } catch (error) {
     return error;
@@ -11,7 +12,7 @@ const getMyBlog = async (page) => {
 const createBlog = async (data) => {
   try {
     const result = await axios.post(
-      "http://localhost:4000/blog/create-blog",
+      `${url}/blog/create-blog`,
       data,
     );
     return result;
@@ -22,7 +23,7 @@ const createBlog = async (data) => {
 const deleteBlog = async (id) => {
   try {
     const result = await axios.delete(
-      `http://localhost:4000/blog/deleteBlog/${id}`,
+      `${url}/blog/deleteBlog/${id}`,
     );
     return result;
   } catch (error) {
@@ -31,7 +32,7 @@ const deleteBlog = async (id) => {
 };
 const getSingleBlog = async (id) => {
   try {
-    const result = await axios.get(`http://localhost:4000/blog/blog/${id}`);
+    const result = await axios.get(`${url}/blog/blog/${id}`);
     return result;
   } catch (error) {
     return error;
@@ -40,7 +41,7 @@ const getSingleBlog = async (id) => {
 const getUpdateBlog = async (dataObj) => {
   try {
     const result = await axios.put(
-      "http://localhost:4000/blog/editBlog",
+      `${url}/blog/editBlog`,
       dataObj,
     );
     return result;
@@ -51,7 +52,7 @@ const getUpdateBlog = async (dataObj) => {
 //get Home blog of followling
 const getHomeBlogs = async () => {
   try {
-    const result = await axios.get("http://localhost:4000/blog/homeBlogs");
+    const result = await axios.get(`${url}/blog/homeBlogs`);
     return result;
   } catch (error) {
     return error;

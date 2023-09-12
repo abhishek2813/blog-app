@@ -1,9 +1,11 @@
 import axios from "axios";
 axios.defaults.withCredentials = true;
+const url = process.env.REACT_APP_API_URL;
+console.log(url);
 const userRegister = async (userObj) => {
   try {
     const result = await axios.post(
-      "http://localhost:4000/user/register",
+      `${url}/user/register`,
       userObj,
     );
     return result;
@@ -14,7 +16,7 @@ const userRegister = async (userObj) => {
 const userLogin = async (userObj) => {
   try {
     const result = await axios.post(
-      "http://localhost:4000/user/login",
+      `${url}/user/login`,
       userObj,
     );
     return result;
@@ -24,7 +26,7 @@ const userLogin = async (userObj) => {
 };
 const userLogout = async () => {
   try {
-    const result = await axios.get("http://localhost:4000/user/logout");
+    const result = await axios.get(`${url}/user/logout`);
     return result;
   } catch (error) {
     return error;
@@ -32,7 +34,7 @@ const userLogout = async () => {
 };
 const getAllUsers = async () => {
   try {
-    const result = await axios.get("http://localhost:4000/user/allUsers");
+    const result = await axios.get(`${url}/user/allUsers`);
     return result;
   } catch (error) {
     return error;
