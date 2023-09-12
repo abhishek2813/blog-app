@@ -2,11 +2,12 @@ import { useParams } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getSingleBlog, getUpdateBlog } from "../actions/blogActions";
-import Header from "./Header";
+import Loader from "../component/Loader";
 
 function EditBlog() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     textBody: "",
@@ -19,6 +20,7 @@ function EditBlog() {
 
   useEffect(() => {
     async function fetchSingleBlog() {
+      setLoading(true)
       const result = await getSingleBlog(id);
       const newObj = {
         title: result.data.data.title,
@@ -27,6 +29,7 @@ function EditBlog() {
       };
       // console.warn(newObj);
       setFormData(newObj);
+      setLoading(false)
     }
     fetchSingleBlog();
   }, []);
@@ -77,7 +80,7 @@ function EditBlog() {
 
   return (
     <div className="container">
-      <Header />
+      {loading && <Loader />}
       <div className="row mt-3 pt-3">
         <h3>Update Blog</h3>
         <form onSubmit={handleSubmit}>
@@ -92,7 +95,7 @@ function EditBlog() {
               name="title"
               value={formData.title}
               onChange={handleChange}
-              placeholder="Enter Email or Username"
+              placeholder="Enter Blog Title"
             />
             {validationErrors.title && (
               <div className="text-danger">{validationErrors.title}</div>

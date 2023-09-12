@@ -31,13 +31,13 @@ const registerUser = async (req, resp) => {
   //Chccek User Name or Email Already Exits
   const exitEmail = await User.findOne({ email: email });
   if (exitEmail) {
-    return resp.status(400).send({ Error: "Email Already Exits" });
+    return resp.status(400).send({ error: "Email Already Exits" });
   }
   const lowerCaseUsername = username.toLowerCase();
 
   const exitUsername = await User.findOne({ username: lowerCaseUsername });
   if (exitUsername) {
-    return resp.status(400).send({ Error: "Username Already Taken" });
+    return resp.status(400).send({ error: "Username Already Taken" });
   }
 
   const hashPassword = await bcrypt.hash(password, SALT_ROUND);
@@ -66,7 +66,7 @@ const loginUser = async (req, resp) => {
   const { loginId, password } = req.body;
   //Chceking both are not empty
   if (!loginId || !password) {
-    return resp.status(500).send({ Error: "All fields are required" });
+    return resp.status(500).send({ error: "All fields are required" });
   }
   let userData;
   //Checking if email then find in collection and store in userData
@@ -79,14 +79,14 @@ const loginUser = async (req, resp) => {
 
   // if User not Found return
   if (!userData) {
-    return resp.status(500).send({ Error: "User Not Found" });
+    return resp.status(500).send({ error: "User Not Found" });
   }
   //checking password and user Password matched or not
   const isMatch = await bcrypt.compare(password, userData.password);
 
   //if not matched return
   if (!isMatch) {
-    return resp.status(500).send({ Error: "Wrong Password" });
+    return resp.status(500).send({ error: "Wrong Password" });
   }
   // adding fields in session
   req.session.isAuth = true;

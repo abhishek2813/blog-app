@@ -1,22 +1,25 @@
 import React, { useEffect, useState } from "react";
 import { getFollowersList } from "../actions/followActions";
-import Header from "./Header";
+import Loader from "../component/Loader";
 
 function FollowerList() {
   const [followerList, setFollowerList] = useState([]);
+  const [loading, setLoading] = useState(false);
   const fetchFollowerList = async () => {
+    setLoading(true)
     const result = await getFollowersList();
     if (result.status === 201) {
       setFollowerList(result.data.data);
     }
+    setLoading(false)
   };
   useEffect(() => {
     fetchFollowerList();
   }, []);
   return (
     <div className="table-responsive">
-        <Header />
       <h4 className="text-center">List of Followers</h4>
+      {loading && <Loader />}
       <table className="table">
         <thead>
           <tr>

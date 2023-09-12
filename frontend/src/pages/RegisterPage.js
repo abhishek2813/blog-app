@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import RegisterForm from "../component/RegisterForm";
-import { useNavigate } from "react-router-dom";
-import Header from "./Header";
+import { Link, useNavigate } from "react-router-dom";
 
 function RegisterPage() {
   const navigate = useNavigate();
@@ -14,10 +13,11 @@ function RegisterPage() {
   }, []);
   return (
     <div>
-        <Header />
       <RegisterForm />
+      <div>Already Have Account <Link className="link" to="/login">Go Login</Link></div>
     </div>
   );
 }
 
 export default RegisterPage;
+

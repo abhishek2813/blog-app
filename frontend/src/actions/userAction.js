@@ -17,9 +17,6 @@ const userLogin = async (userObj) => {
       "http://localhost:4000/user/login",
       userObj,
     );
-    if (result.status === 201) {
-      window.localStorage.setItem("user", JSON.stringify(result.data.data));
-    }
     return result;
   } catch (error) {
     return error;

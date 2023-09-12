@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createBlog } from "../actions/blogActions";
+import Loader from "./Loader";
 
 function AddBlog() {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     textBody: "",
@@ -22,7 +24,7 @@ function AddBlog() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+     setLoading(true)
     // Reset validation errors
     setValidationErrors({
       title: "",
@@ -38,6 +40,7 @@ function AddBlog() {
         title: "Title of blog is required",
       }));
       isValid = false;
+      setLoading(false)
     }
 
     if (formData.textBody.trim() === "") {
@@ -46,6 +49,7 @@ function AddBlog() {
         textBody: "Blog body is required",
       }));
       isValid = false;
+      setLoading(false)
     }
 
     if (isValid) {
@@ -56,7 +60,7 @@ function AddBlog() {
       } else {
         alert(result.response.data.message);
       }
-      console.log(result);
+      setLoading(false)
     }
   };
 
@@ -64,6 +68,7 @@ function AddBlog() {
     <div className="container">
       <div className="row mt-3 pt-3">
         <h3>Create New Blog</h3>
+        {loading && <Loader />}
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
             <label htmlFor="username" className="form-label">

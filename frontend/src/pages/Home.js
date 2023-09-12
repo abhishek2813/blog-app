@@ -15,7 +15,6 @@ function Home() {
 
   return (
     <div>
-      <Header />
       <HomeBlog />
     </div>
   );

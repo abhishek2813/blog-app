@@ -1,22 +1,25 @@
 import React, { useEffect, useState } from "react";
 import { getFollowingList } from "../actions/followActions";
-import Header from "./Header";
+import Loader from "../component/Loader";
 
 function FollowingList() {
   const [followingList, setFollowingList] = useState([]);
+  const [loading, setLoading] = useState(false);
   const fetchFollowerList = async () => {
+    setLoading(true)
     const result = await getFollowingList();
     if (result.status === 201) {
       setFollowingList(result.data.data);
     }
+    setLoading(false)
   };
   useEffect(() => {
     fetchFollowerList();
   }, []);
   return (
     <div className="table-responsive">
-        <Header />
       <h4 className="text-center">List of Following</h4>
+      {loading && <Loader />}
       <table className="table">
         <thead>
           <tr>
@@ -29,7 +32,7 @@ function FollowingList() {
         </thead>
         <tbody>
           {followingList.map((item, i) => (
-            <tr>
+            <tr key={item.userId}>
               <th scope="row">{i + 1}</th>
               <td>{item.name}</td>
               <td>{item.username}</td>

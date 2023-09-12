@@ -85,9 +85,20 @@ const getMyBlogs = async (req, resp) => {
 //delete Blog
 const deleteBlog = async (req, resp) => {
   const blogId = req.params.blogId;
+  const userId = req.session.user.userId;
   try {
+          const blogData = await Blog.findById(blogId);
+           // Check if user is authorized to edit their blog
+           if (blogData.userId.toString() !== userId.toString()) {
+            return resp.status(401).send({
+              status: 401,
+              message: "Not allowed to delete authorization failed",
+            });
+          }
+
     const result = await Blog.deleteOne({ _id: blogId });
     // console.log(result);
+
     if (result.deletedCount > 0) {
       resp
         .status(201)

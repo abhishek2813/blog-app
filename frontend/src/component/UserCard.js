@@ -21,7 +21,7 @@ function UserCard({ props, fetchUsers }) {
   };
   return (
     <div>
-      <div className="card">
+      <div className="card" key={props.userId}>
         <div className="card-body">
           <h5 className="card-title">{props.username}</h5>
           <p className="card-text">{props.name}</p>

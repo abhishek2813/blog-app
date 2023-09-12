@@ -1,12 +1,13 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import LoginForm from "../component/LoginForm";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { Auth } from "../AuthProvider";
 
 function LoginPage() {
+  const {user} = useContext(Auth)
   const navigate = useNavigate();
   useEffect(() => {
-    const user = localStorage.getItem("user");
-    //check if user Already login
+  //   //check if user Already login
     if (user) {
       navigate("/");
     }
@@ -14,6 +15,7 @@ function LoginPage() {
   return (
     <div>
       <LoginForm />
+      <div>Create Account <Link className="link" to="/register">Go Register</Link></div>
     </div>
   );
 }

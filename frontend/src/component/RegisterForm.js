@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { userRegister } from "../actions/userAction";
 import { useNavigate } from "react-router-dom";
+import Loader from "./Loader";
 
 function RegisterForm() {
+  const [loading, setLoading] = useState(false)
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
@@ -16,6 +18,7 @@ function RegisterForm() {
     username: "",
     email: "",
     password: "",
+    error: "",
   });
 
   const handleChange = (e) => {
@@ -25,6 +28,7 @@ function RegisterForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent the form from submitting
+    setLoading(true)
 
     // Reset validation errors
     setValidationErrors({
@@ -43,6 +47,7 @@ function RegisterForm() {
         name: "Name is required",
       }));
       isValid = false;
+      setLoading(false)
     }
 
     if (formData.username.trim() === "") {
@@ -51,6 +56,7 @@ function RegisterForm() {
         username: "Username is required",
       }));
       isValid = false;
+      setLoading(false)
     }
 
     if (!formData.email.match(/^\S+@\S+\.\S+$/)) {
@@ -59,6 +65,7 @@ function RegisterForm() {
         email: "Invalid email address",
       }));
       isValid = false;
+      setLoading(false)
     }
 
     if (formData.password.length < 6) {
@@ -67,11 +74,12 @@ function RegisterForm() {
         password: "Password must be at least 6 characters long",
       }));
       isValid = false;
+      setLoading(false)
     }
 
     if (isValid) {
-      console.log(formData);
       const result = await userRegister(formData);
+      console.warn(result);
       if (result.status === 201) {
         setFormData({
           name: "",
@@ -81,15 +89,23 @@ function RegisterForm() {
         });
         navigate("/login");
       } else {
-        console.warn(result.response.Error);
+        setValidationErrors((prevErrors) => ({
+          ...prevErrors,
+          error: result.response.data.error,
+        }));
+        setLoading(false)
       }
     }
   };
 
   return (
     <div className="container">
+      {loading && <Loader />}
       <div className="row mt-3 pt-3">
         <h3>Register in Blog App</h3>
+        {validationErrors.error && (
+              <h1 className="text-center text-danger">{validationErrors.error}</h1>
+            )}
         <form onSubmit={handleSubmit} method="post">
           <div className="mb-3">
             <label htmlFor="name" className="form-label">
