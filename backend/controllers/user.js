@@ -96,7 +96,7 @@ const loginUser = async (req, resp) => {
     email: userData.email,
     userId: userData._id,
   };
-  //  console.log(req.session);
+   console.log(req.session);
   resp
     .status(201)
     .send({ status: 201, message: "Login success", data: req.session.user });

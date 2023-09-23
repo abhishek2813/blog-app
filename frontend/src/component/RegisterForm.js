@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { userRegister } from "../actions/userAction";
 import { useNavigate } from "react-router-dom";
 import Loader from "./Loader";
+import { toast } from "react-toastify";
 
 function RegisterForm() {
   const [loading, setLoading] = useState(false)
@@ -87,12 +88,24 @@ function RegisterForm() {
           email: "",
           password: "",
         });
+        toast.success("Register Successfully",{
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          })
         navigate("/login");
       } else {
         setValidationErrors((prevErrors) => ({
           ...prevErrors,
           error: result.response.data.error,
         }));
+        toast.error("Error",{
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          })
         setLoading(false)
       }
     }

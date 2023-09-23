@@ -3,7 +3,7 @@ import { userLogin } from "../actions/userAction";
 import { useNavigate } from "react-router-dom";
 import { Auth } from "../AuthProvider";
 import Loader from "./Loader";
-
+import {toast} from 'react-toastify'
 function LoginForm() {
   const [loading, setLoading] = useState(false)
   const {setUser} = useContext(Auth)
@@ -59,6 +59,12 @@ function LoginForm() {
       //call login function
       const result = await userLogin(formData);
       if (result.status === 201) {
+        toast.success("Login Success",{
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          })
        const newUser = window.localStorage.setItem("user", JSON.stringify(result.data.data));
        setUser(result.data.data)
        setLoading(false)
@@ -70,6 +76,12 @@ function LoginForm() {
           ...prevErrors,
           error: result.response.data.error,
         }));
+        toast.error("Error",{
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          })
         setLoading(false)
       }
     }

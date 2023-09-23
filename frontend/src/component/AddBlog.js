@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createBlog } from "../actions/blogActions";
 import Loader from "./Loader";
-
+import {toast } from 'react-toastify'
 function AddBlog() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -56,9 +56,15 @@ function AddBlog() {
       //call login function
       const result = await createBlog(formData);
       if (result.status === 201) {
+        toast.success("Blog Added")
         navigate("/myBlogs");
       } else {
-        alert(result.response.data.message);
+        toast.error(result.response.data.message,{
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          })
       }
       setLoading(false)
     }

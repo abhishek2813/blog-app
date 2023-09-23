@@ -6,7 +6,7 @@ const isAuth = (req, resp, next) => {
   } else {
     return resp
       .status(500)
-      .send({ Error: "Invalid session Please Login Again" });
+      .send({ error: "Invalid session Please Login Again" });
   }
 };
 module.exports = { isAuth };

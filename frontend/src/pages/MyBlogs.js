@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import BlogCard from "../component/BlogCard";
 import { getMyBlog } from "../actions/blogActions";
 import Loader from "../component/Loader";
+import { toast } from "react-toastify";
 
 function MyBlogs() {
   const [blogData, setBlogData] = useState([]);
@@ -13,6 +14,19 @@ function MyBlogs() {
     // check if every thing is fine
     if (result.status === 201) {
       setBlogData(result.data.data);
+      // toast.success("My Blog Fetched",{
+      //   position: "top-right",
+      //   autoClose: 2000,
+      //   hideProgressBar: false,
+      //   closeOnClick: true,
+      //   })
+    }else{
+      toast.error(result.response.data.message,{
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        })
     }
     setLoading(false)
     // console.log(result);

@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getSingleBlog, getUpdateBlog } from "../actions/blogActions";
 import Loader from "../component/Loader";
+import { toast } from "react-toastify";
 
 function EditBlog() {
   const { id } = useParams();
@@ -71,9 +72,20 @@ function EditBlog() {
       //call login function
       const result = await getUpdateBlog(formData);
       if (result.status === 201) {
+        toast.success("Blog Updated",{
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          })
         navigate("/myBlogs");
       } else {
-        alert(result.response.data.message);
+        toast.error(result.response.data.message,{
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          })
       }
     }
   };

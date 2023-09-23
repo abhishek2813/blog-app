@@ -1,7 +1,7 @@
 import axios from "axios";
 axios.defaults.withCredentials = true;
 const url = process.env.REACT_APP_API_URL;
-console.log(url);
+
 const userRegister = async (userObj) => {
   try {
     const result = await axios.post(
@@ -13,6 +13,7 @@ const userRegister = async (userObj) => {
     return error;
   }
 };
+
 const userLogin = async (userObj) => {
   try {
     const result = await axios.post(

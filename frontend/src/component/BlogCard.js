@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { deleteBlog } from "../actions/blogActions";
 import { Link } from "react-router-dom";
 import Loader from "./Loader";
+import { toast } from "react-toastify";
 
 function BlogCard({ props, fetchBlog, isButton }) {
   const [loading, setLoading] = useState(false);
@@ -10,10 +11,20 @@ function BlogCard({ props, fetchBlog, isButton }) {
     setLoading(true)
     const result = await deleteBlog(props._id);
     if (result.data.status === 201) {
-      alert(result.data.message);
+      toast.success(result.data.message,{
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        })
       fetchBlog();
     } else {
-      alert(result.data.message);
+      toast.error(result.response.data.message,{
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        })
     }
     setLoading(false)
   };

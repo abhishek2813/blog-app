@@ -21,6 +21,9 @@ const store = new MongoDBStore({
 app.use(
   session({
     secret: process.env.SECRET_KEY,
+    cookie: {
+      maxAge: 24 * 60 * 60 * 1000,
+    },
     resave: false,
     saveUninitialized: false,
     store: store,
@@ -28,10 +31,11 @@ app.use(
 );
 
 const corsOptions = {
-  origin: process.env.CORE_URL, // Change this to match your React frontend URL
+  origin: ["https://bloggy-git-main-abhishek2813.vercel.app","https://bloggy-abhishek2813.vercel.app",process.env.CORE_URL], // 
   credentials: true,
 };
 app.use(cors(corsOptions));
+
 //Adding All Routes from routes folder
 app.use("/user", userRoutes);
 app.use("/blog", blogRoutes);

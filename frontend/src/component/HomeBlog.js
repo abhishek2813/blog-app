@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import BlogCard from "./BlogCard";
 import Loader from "./Loader";
 import { getHomeBlogs } from "../actions/blogActions";
+import {toast} from 'react-toastify'
 function HomeBlog() {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -11,6 +12,12 @@ function HomeBlog() {
       const result = await getHomeBlogs();
       setBlogs(result.data.data);
       setLoading(false)
+      // toast.success("All Blog Fetched",{
+      //   position: "top-right",
+      //   autoClose: 2000,
+      //   hideProgressBar: false,
+      //   closeOnClick: true,
+      //   })
     };
     fetchHomeBlog();
   }, []);

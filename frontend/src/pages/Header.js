@@ -2,7 +2,8 @@ import React, { useContext } from "react";
 import { NavLink } from "react-router-dom";
 import LogoutButton from "../component/LogoutButton";
 import {Auth} from "../AuthProvider";
-
+import { ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 function Header() {
   const {user} = useContext(Auth)
   // console.log(user);
@@ -74,6 +75,7 @@ function Header() {
           </ul>
         </div>
       </nav>
+      <ToastContainer />
     </div>
   );
 }

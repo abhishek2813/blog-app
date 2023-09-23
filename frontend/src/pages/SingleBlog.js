@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getSingleBlog } from "../actions/blogActions";
 import Loader from "../component/Loader";
+import { toast } from "react-toastify";
 
 function SingleBlog() {
   const [blog, setBlog] = useState({});
@@ -13,11 +14,24 @@ function SingleBlog() {
       const result = await getSingleBlog(id);
       if (result.status === 201) {
         setBlog(result.data.data);
+        // toast.success("Single Blog Fetched",{
+        //   position: "top-right",
+        //   autoClose: 2000,
+        //   hideProgressBar: false,
+        //   closeOnClick: true,
+        //   })
+      }else{
+        toast.error(result.response.data.message,{
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          })
       }
       setLoading(false)
     };
     fetchSingleBlog();
-  }, []);
+  }, [id]);
   return (
     <div>
     <div className="container">

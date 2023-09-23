@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { getFollowingList } from "../actions/followActions";
 import Loader from "../component/Loader";
+import { toast } from "react-toastify";
 
 function FollowingList() {
   const [followingList, setFollowingList] = useState([]);
@@ -10,6 +11,19 @@ function FollowingList() {
     const result = await getFollowingList();
     if (result.status === 201) {
       setFollowingList(result.data.data);
+      // toast.success("Following List Fetched",{
+      //   position: "top-right",
+      //   autoClose: 2000,
+      //   hideProgressBar: false,
+      //   closeOnClick: true,
+      //   })
+    }else{
+      toast.error(result.response.data.message,{
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        })
     }
     setLoading(false)
   };
