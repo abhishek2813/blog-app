@@ -33,7 +33,7 @@ function HomeBlog() {
       {loading && <Loader />}
       <div className="row">
         {blogs.map((user) => (
-          <div className="col-lg-4 py-1">
+          <div className="col-lg-4 py-1" key={user._id}>
             <BlogCard props={user} />
           </div>
         ))}

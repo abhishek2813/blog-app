@@ -41,7 +41,7 @@ function MyBlogs() {
         {loading && <Loader />}
         <div className="row">
           {blogData.map((item) => (
-            <div className="col-md-4 my-2">
+            <div className="col-md-4 my-2" key={item._id}>
               <BlogCard props={item} fetchBlog={fetchBlog} isButton={true} />
             </div>
           ))}

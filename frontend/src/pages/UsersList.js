@@ -21,7 +21,7 @@ function UsersList() {
       <div className="row">
         {loading && <Loader />}
         {users.map((user) => (
-          <div className="col-md-3 my-3 mx-3">
+          <div className="col-md-3 my-3 mx-3" key={user.userId}>
             <UserCard props={user} fetchUsers={fetchUsers} />
           </div>
         ))}
