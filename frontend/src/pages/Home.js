@@ -1,23 +1,19 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { Auth } from "../AuthProvider";
 import HomeBlog from "../component/HomeBlog";
-import Header from "./Header";
 
 function Home() {
+  const { user } = useContext(Auth);
   const navigate = useNavigate();
   useEffect(() => {
-    const user = localStorage.getItem("user");
     //check if user not login
     if (!user) {
       navigate("/login");
     }
-  }, []);
+  }, [user]);
 
-  return (
-    <div>
-      <HomeBlog />
-    </div>
-  );
+  return <div>{user && <HomeBlog />}</div>;
 }
 
 export default Home;
